@@ -23,3 +23,24 @@ export async function GET() {
     });
   }
 }
+
+export async function POST(request) {
+  try {
+    const body = await request.json();
+
+    // Simulate some logic or processing
+    if (!body || body.action !== 'decrement') {
+      return new Response(JSON.stringify({ error: 'Invalid action' }), { status: 400 });
+    }
+
+    return Response.json({
+      success: true,
+      message: 'Counter decremented',
+    });
+
+  } catch (err) {
+    return new Response(JSON.stringify({ error: 'Invalid POST data' }), {
+      status: 400,
+    });
+  }
+}

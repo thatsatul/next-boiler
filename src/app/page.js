@@ -9,6 +9,7 @@ export default function Home() {
       </main>
       <footer className={styles.footer}>
         <Link href="/test">Test page</Link>
+        <Link href="/dashboard">Dashboard page</Link>
       </footer>
     </div>
   );
