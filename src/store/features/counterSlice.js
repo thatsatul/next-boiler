@@ -1,10 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { apiCall } from '@/lib/apiClient';
 
 // Simulated API call (replace with your real API)
 export const incrementAsync = createAsyncThunk(
   'counter/incrementAsync',
   async () => {
-    const response = await fetch('/api/increment');
+    const response = await apiCall('/api/increment');
     if (!response.ok) {
       throw new Error('API call failed');
     }
@@ -14,10 +15,10 @@ export const incrementAsync = createAsyncThunk(
 );
 
 export const decrementAsync = createAsyncThunk('counter/decrementAsync', async () => {
-  const res = await fetch('/api/increment', {
+  const res = await apiCall('/api/increment', { method: 'POST' }, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ action: 'decrement' }),
+    data: { action: 'decrement' },
   });
 
   if (!res.ok) throw new Error('POST failed');
