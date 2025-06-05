@@ -9,7 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@codemirror/lang-html": "^6.4.9",
+    "@codemirror/lang-javascript": "^6.2.4",
+    "@codemirror/lang-markdown": "^6.3.2",
+    "@codemirror/lang-python": "^6.2.1",
     "@reduxjs/toolkit": "^2.8.2",
+    "@uiw/react-codemirror": "^4.23.12",
     "next": "15.3.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
