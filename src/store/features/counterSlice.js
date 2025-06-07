@@ -5,30 +5,31 @@ import { apiCall } from '@/lib/apiClient';
 export const incrementAsync = createAsyncThunk(
   'counter/incrementAsync',
   async () => {
-    const response = await apiCall('/api/increment');
-    if (!response.ok) {
-      throw new Error('API call failed');
-    }
-    const data = await response.json();
-    return data; // you can use this if needed
+    const res = await apiCall('/api/increment');
+    // if (!response.ok) {
+    //   throw new Error('API call failed');
+    // }
+    console.log('incrementAsync response:', res);
+    return res; // you can use this if needed
   }
 );
 
 export const decrementAsync = createAsyncThunk('counter/decrementAsync', async () => {
-  const res = await apiCall('/api/increment', { method: 'POST' }, {
+  const res = await apiCall('/api/increment', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    data: { action: 'decrement' },
+    data: JSON.stringify({ action: 'decrement' }),
   });
 
-  if (!res.ok) throw new Error('POST failed');
-  return await res.json();
+  // if (!res.ok) throw new Error('POST failed');
+  return await res;
 });
 
 const counterSlice = createSlice({
   name: 'counter',
   initialState: {
-    value: 0,
+    test: 'hello',
+    value: 1,
     loading: false,
     error: null,
   },

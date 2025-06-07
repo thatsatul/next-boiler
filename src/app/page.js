@@ -13,6 +13,9 @@ export default function Home() {
         <Link href="/code-editor">
           Code editor
         </Link>
+        <Link href="/home">
+          Home page
+        </Link>
       </footer>
     </div>
   );
