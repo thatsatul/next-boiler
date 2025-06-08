@@ -1,46 +1,44 @@
-const mockRes = {
-  id: '12345',
-  text: 'This is a mock response from the API.',
-  timestamp: new Date().toISOString(),
-  from: 'bot'
-}
+import { videoQueryMock } from '@/lib/mock';
 
 export async function POST(request) {
   try {
-    const body = await request.json();
+    let body = await request.json();
     console.log('Received POST data:', body);
-
-    const res = await fetch('https://mp436d4f85b1b18abad9.free.beeceptor.com/api/query', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      // body: JSON.stringify(body),
-    });
-    // if (!res.ok) {
-    //   return new Response(JSON.stringify({ error: 'Failed to fetch data' }), { status: 500 });
-    // }
-    console.log('Response status:', res.status);
-    const data = await res.json();
-    console.log('Response from API:', data);
-    if (!data || !data.id) {
-      return new Response(JSON.stringify({ error: 'Invalid response from API' }), { status: 500 });
+    body = JSON.parse(body); // Ensure body is a valid JSON object
+    // No need for a separate body parser in Next.js API routes (app router).
+    // The request.json() method already parses the JSON body.
+    // For reference, you can log the parsed body as below:
+    console.log('Request body:', body?.current_action, body?.text, body?.chatHistory);
+    const chatHistory = body.chatHistory || [];
+    console.log('Chat history:', chatHistory);
+    const botMessages = chatHistory.filter(
+      (msg) => msg.from === 'bot'
+    );
+    console.log('Filtered bot messages:', botMessages);
+    let startIndex = botMessages ? botMessages.length : 0;
+    let message = videoQueryMock[startIndex];
+    const messages = [message];
+    while (message.next_action === 'CONTINUE') {
+      console.log('Processing message:', message);
+      startIndex++;
+      message = videoQueryMock[startIndex];
+      messages.push(message);
     }
-    // Process the data as needed
+
     return Response.json({
       success: true,
       message: 'Data processed successfully',
-      data,
+      data: messages,
     });
   }
   catch (err) {
     console.error('Error processing POST request:', err);
     return new Response(JSON.stringify({
-      success: true,
-      data: mockRes,
-      message: 'Mock response returned due to error',
+      success: false,
+      data: null,
+      message: 'An error occurred while processing your request',
     }), {
-      status: 200,
+      status: 500,
     });
   }
 }

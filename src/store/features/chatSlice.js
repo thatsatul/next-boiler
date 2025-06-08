@@ -1,21 +1,30 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { apiCall } from '@/lib/apiClient';
 
-export const sendQuery = createAsyncThunk('chat/sendQuery', async (payload = null) => {
-  let finalPayload = payload;
-  if (!payload) {
-    finalPayload = {
-      current_action: 'START_CHAT'
-    };
-  }
-  const res = await apiCall('/api/query', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    data: JSON.stringify(finalPayload),
-  });
+export const sendQuery = createAsyncThunk(
+  'chat/sendQuery',
+  async (payload = null, { getState }) => {
+    let finalPayload = payload;
+    if (!payload) {
+      finalPayload = {
+        current_action: 'START_CHAT'
+      };
+    }
 
-  return res;
-});
+    // Access state here
+    const state = getState();
+    // Example: get current chat data
+    const currentChatData = state.chat?.chat?.data;
+    console.log('Current state:', state, currentChatData);
+    const res = await apiCall('/api/query', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: JSON.stringify({ ...finalPayload, chatHistory: currentChatData }),
+    });
+
+    return res;
+  }
+);
 
 const querySlice = createSlice({
   name: 'chat',
@@ -43,7 +52,7 @@ const querySlice = createSlice({
         console.log('sendQuery.fulfilled', state, action);
         state.chat.loading = false;
         // Add the response to chat.data array
-        state.chat.data = [...state.chat.data, action.payload.data];
+        state.chat.data = [...state.chat.data, ...action.payload.data];
         console.log('Updated chat data:', state.chat.data);
       })
       .addCase(sendQuery.rejected, (state, action) => {
